@@ -2,6 +2,7 @@ import os
 import glob
 from tkinter import Tk, simpledialog
 from tkinter.filedialog import askdirectory
+from tkinter import messagebox  # メッセージボックスをインポート
 
 def select_folder():
     root = Tk()
@@ -27,14 +28,14 @@ def main():
     try:
         folder = select_folder()
         if not folder:
-            print("No folder selected. Exiting.")
+            messagebox.showerror("Error", "No folder selected. Exiting.")
             return
 
         root = Tk()
         root.withdraw()
         extension = get_user_input(root, "Enter the file extension (include the dot, e.g., .txt):")
         if not extension:
-            print("No extension provided. Exiting.")
+            messagebox.showerror("Error", "No extension provided. Exiting.")
             return
 
         output_directory = os.path.join(os.getcwd(), "filelister_output")
@@ -42,7 +43,7 @@ def main():
 
         output_filename = get_user_input(root, "Enter the output file name:")
         if not output_filename:
-            print("No output file name provided. Exiting.")
+            messagebox.showerror("Error", "No output file name provided. Exiting.")
             return
 
         if not output_filename.endswith('.txt'):
@@ -50,14 +51,14 @@ def main():
 
         files = find_files(folder, extension)
         if not files:
-            print("No files found with the given extension.")
+            messagebox.showinfo("Information", "No files found with the given extension.")
             return
 
         output_path = os.path.join(output_directory, output_filename)
         write_filenames_to_txt(files, output_path)
-        print(f"File names are written to {output_path}")
+        messagebox.showinfo("Success", f"File names are written to {output_path}")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        messagebox.showerror("Error", f"An error occurred: {e}")
     finally:
         if 'root' in locals():
             root.destroy()
