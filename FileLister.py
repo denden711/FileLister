@@ -4,23 +4,23 @@ from tkinter import Tk, simpledialog, messagebox
 from tkinter.filedialog import askdirectory
 
 def select_folder(root):
-    """ユーザーにフォルダを選択させる。引数にはTkinterのルートウィンドウを使用する。"""
-    folder_selected = askdirectory(parent=root)  # ダイアログを表示し、選択されたフォルダのパスを取得
+    """ Tkinterのルートウィンドウを使ってユーザーにフォルダを選択させる。 """
+    folder_selected = askdirectory(parent=root)  # ダイアログを表示して選択されたフォルダのパスを取得
     return folder_selected
 
 def get_user_input(root, prompt):
-    """ユーザーからの入力を受け取る。引数にはTkinterのルートウィンドウとプロンプトのメッセージを使用する。"""
+    """ Tkinterのルートウィンドウとプロンプトメッセージを使ってユーザーからの入力を受け取る。 """
     input_value = simpledialog.askstring("Input", prompt, parent=root)  # 入力ダイアログを表示
     return input_value.strip() if input_value is not None else None  # 入力があればトリムして返し、なければNoneを返す
 
 def find_files(folder, extension):
-    """指定されたフォルダ内で、特定の拡張子を持つファイルを検索する。"""
+    """ 指定されたフォルダ内で、特定の拡張子を持つファイルを検索する。 """
     extension = extension.lstrip('.')  # 拡張子の前のドットを削除
     search_pattern = f'*.{extension}'  # 検索パターンを作成
     return glob.glob(os.path.join(folder, search_pattern))  # パターンに一致するファイルのリストを返す
 
 def write_filenames_to_txt(files, output_file):
-    """ファイルリストをテキストファイルに書き込む。"""
+    """ ファイルリストをテキストファイルに書き込む。 """
     with open(output_file, 'w') as file:  # ファイルを開いて書き込み
         for filename in files:
             # ファイルの基本名を取得して書き込み
@@ -57,6 +57,11 @@ def main():
             return
 
         output_path = os.path.join(output_directory, output_filename)  # 出力ファイルの完全なパスを作成
+        # ファイルが既に存在する場合は上書き確認
+        if os.path.exists(output_path):
+            if not messagebox.askyesno("Confirm", "ファイルは既に存在します。上書きしますか？"):
+                return  # ユーザーが上書きを拒否した場合は処理を終了
+
         write_filenames_to_txt(files, output_path)  # ファイル名を出力ファイルに書き込む
         messagebox.showinfo("Success", f"ファイル名が {output_path} に書き込まれました")
     except Exception as e:
